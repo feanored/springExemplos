@@ -29,7 +29,6 @@ public class ProdutoController {
 	private ProdutoRepository repoProduto;
 
 	@PostMapping
-//	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT })
 	public @ResponseBody Produto salvarProduto(@Valid @RequestBody Produto produto) {
 		return repoProduto.save(produto);
 	}
