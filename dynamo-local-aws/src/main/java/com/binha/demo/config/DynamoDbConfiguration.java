@@ -1,5 +1,6 @@
 package com.binha.demo.config;
 
+import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
@@ -33,24 +34,17 @@ public class DynamoDbConfiguration {
     private AmazonDynamoDB buildAmazonDynamoDB() {
         return AmazonDynamoDBClientBuilder
                 .standard()
-                .withEndpointConfiguration(endpointConfiguration())
-                .withCredentials(credentialsProvider())
+                .withEndpointConfiguration( new AwsClientBuilder.EndpointConfiguration(
+                        amazonDynamoDBEndpoint,
+                        amazonAWSRegion
+                ))
+                .withCredentials(awsCredentialsProvider())
                 .build();
     }
 
-    private AwsClientBuilder.EndpointConfiguration endpointConfiguration() {
-        return new AwsClientBuilder.EndpointConfiguration(
-                amazonDynamoDBEndpoint,
-                amazonAWSRegion
-        );
+    @Bean
+    public AWSCredentialsProvider awsCredentialsProvider() {
+        return new AWSStaticCredentialsProvider(new BasicAWSCredentials(amazonAWSAccessKey, amazonAWSSecretKey));
     }
 
-    private AWSStaticCredentialsProvider credentialsProvider() {
-        return new AWSStaticCredentialsProvider(
-                new BasicAWSCredentials(
-                        amazonAWSAccessKey,
-                        amazonAWSSecretKey
-                )
-        );
-    }
 }
