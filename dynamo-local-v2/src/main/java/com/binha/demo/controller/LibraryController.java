@@ -1,5 +1,6 @@
 package com.binha.demo.controller;
 
+import com.binha.demo.exception.EntityNotFoundException;
 import com.binha.demo.model.Author;
 import com.binha.demo.model.Book;
 import com.binha.demo.model.Member;
@@ -21,19 +22,27 @@ public class LibraryController {
 
     private final LibraryService libraryService;
 
-    @GetMapping("/book")
+    @GetMapping("/books")
     public ResponseEntity<Iterable<Book>> readBooks() {
         return ResponseEntity.ok(libraryService.readBooks());
     }
 
     @GetMapping("/book")
-    public ResponseEntity<Book> readBooByIsbnk(@RequestParam String isbn) {
-        return ResponseEntity.ok(libraryService.readBook(isbn));
+    public ResponseEntity readBookByIsbn(@RequestParam String isbn) {
+        try {
+            return ResponseEntity.ok(libraryService.readBook(isbn));
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity.badRequest().body(ex.getLocalizedMessage());
+        }
     }
 
     @GetMapping("/book/{bookId}")
-    public ResponseEntity<Book> readBookById(@PathVariable String bookId) {
-        return ResponseEntity.ok(libraryService.readBookById(bookId));
+    public ResponseEntity readBookById(@PathVariable String bookId) {
+        try {
+            return ResponseEntity.ok(libraryService.readBookById(bookId));
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity.badRequest().body(ex.getLocalizedMessage());
+        }
     }
 
     @PostMapping("/book")
@@ -44,6 +53,11 @@ public class LibraryController {
     @PutMapping("/book/{bookId}")
     public ResponseEntity<Book> updateBook(@PathVariable("bookId") String bookId, @RequestBody BookCreationDto request) {
         return ResponseEntity.ok(libraryService.updateBook(bookId, request));
+    }
+
+    @GetMapping("/authors")
+    public ResponseEntity<Iterable<Author>> getAuthors() {
+        return ResponseEntity.ok(libraryService.readAuthors());
     }
 
     @PostMapping("/author")

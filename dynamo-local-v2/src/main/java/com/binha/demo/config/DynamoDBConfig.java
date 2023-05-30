@@ -35,13 +35,9 @@ public class DynamoDBConfig {
 
     @Bean
     public AmazonDynamoDB amazonDynamoDB(AWSCredentialsProvider awsCredentialsProvider) {
-        AmazonDynamoDB amazonDynamoDB
-                = AmazonDynamoDBClientBuilder.standard()
+        return AmazonDynamoDBClientBuilder.standard()
                 .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(amazonDynamoDBEndpoint, amazonAWSRegion))
                 .withCredentials(awsCredentialsProvider).build();
-        dropTables(amazonDynamoDB);
-        createTables(amazonDynamoDB);
-        return amazonDynamoDB;
     }
 
     @Bean
@@ -49,30 +45,7 @@ public class DynamoDBConfig {
         return new AWSStaticCredentialsProvider(new BasicAWSCredentials(amazonAWSAccessKey, amazonAWSSecretKey));
     }
 
-    public void dropTables(AmazonDynamoDB amazonDynamoDB) {
-        try {
-            amazonDynamoDB.deleteTable("book");
-            amazonDynamoDB.deleteTable("author");
-            amazonDynamoDB.deleteTable("lend");
-            amazonDynamoDB.deleteTable("member");
-            amazonDynamoDB.deleteTable("appUser");
-        } catch (Exception ignored) {
-        }
-    }
-
-    public void createTables(AmazonDynamoDB amazonDynamoDB) {
-        try {
-            createTable(amazonDynamoDB, "book");
-            createTable(amazonDynamoDB, "author");
-            createTable(amazonDynamoDB, "lend");
-            createTable(amazonDynamoDB, "member");
-            createTable(amazonDynamoDB, "appUser");
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void createTable(AmazonDynamoDB clientDB, String tableName) throws InterruptedException {
+    public static void createTable(AmazonDynamoDB clientDB, String tableName) throws InterruptedException {
         DynamoDB dynamoDB = new DynamoDB(clientDB);
 
         List<AttributeDefinition> attributeDefinitions = new ArrayList<>();

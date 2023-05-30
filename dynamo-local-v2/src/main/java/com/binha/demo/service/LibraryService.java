@@ -84,6 +84,10 @@ public class LibraryService {
         return memberRepository.save(member);
     }
 
+    public Iterable<Author> readAuthors() {
+        return authorRepository.findAll();
+    }
+
     public Author createAuthor(AuthorCreationDto request) {
         Author author = new Author();
         BeanUtils.copyProperties(request, author);
