@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/library")
+@RequestMapping(value = "/library")
 @RequiredArgsConstructor
 public class LibraryController {
     private final LibraryService libraryService;

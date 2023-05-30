@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Instant;
 
 @RestController
-@RequestMapping(value = "/rest")
+@RequestMapping(value = "/config")
 @RequiredArgsConstructor
 public class MainController {
 
@@ -23,36 +23,37 @@ public class MainController {
     private final MemberRepository memberRepository;
     private final LendRepository lendRepository;
 
-    @GetMapping
-    public ResponseEntity create() {
+    @GetMapping("/dados")
+    public ResponseEntity<String> create() {
+        try {
+            Author author = new Author();
+            author.setFirstName("Random");
+            author.setLastName("Upu");
+            Author save = authorRepository.save(author);
 
-        Author author = new Author();
-        author.setFirstName("Random");
-        author.setLastName("Upu");
-        Author save = authorRepository.save(author);
+            Book book = new Book();
+            book.setAuthorId(save.getId());
+            book.setName("Arthur");
+            book.setIsbn("2892828282822");
+            Book bookSaved = bookRepository.save(book);
 
-        Book book = new Book();
-        book.setAuthorId(save.getId());
-        book.setName("Arthur");
-        book.setIsbn("2892828282822");
+            Member member = new Member();
+            member.setStatus(MemberStatus.ACTIVE);
+            member.setFirstName("Srimath");
+            member.setLastName("Anagarika");
+            Member member1 = memberRepository.save(member);
 
-        Book bookSaved = bookRepository.save(book);
+            Lend lend = new Lend();
+            lend.setDueOn(Instant.now().toString());
+            lend.setStartOn(Instant.now().toString());
+            lend.setStatus(LendStatus.BURROWED);
+            lend.setBookId(bookSaved.getId());
+            lend.setMemberId(member1.getId());
+            lendRepository.save(lend);
 
-        Member member = new Member();
-        member.setStatus(MemberStatus.ACTIVE);
-        member.setFirstName("Srimath");
-        member.setLastName("Anagarika");
-
-        Member member1 = memberRepository.save(member);
-
-
-        Lend lend = new Lend();
-        lend.setDueOn(Instant.now().toString());
-        lend.setStartOn(Instant.now().toString());
-        lend.setStatus(LendStatus.BURROWED);
-        lend.setBookId(bookSaved.getId());
-        lend.setMemberId(member1.getId());
-        lendRepository.save(lend);
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().body(ex.toString());
+        }
 
         return ResponseEntity.ok().build();
     }
