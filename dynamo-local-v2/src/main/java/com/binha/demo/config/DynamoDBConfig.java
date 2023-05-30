@@ -36,9 +36,9 @@ public class DynamoDBConfig {
     @Bean
     public AmazonDynamoDB amazonDynamoDB(AWSCredentialsProvider awsCredentialsProvider) {
         AmazonDynamoDB amazonDynamoDB
-            = AmazonDynamoDBClientBuilder.standard()
-            .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(amazonDynamoDBEndpoint, amazonAWSRegion))
-            .withCredentials(awsCredentialsProvider).build();
+                = AmazonDynamoDBClientBuilder.standard()
+                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(amazonDynamoDBEndpoint, amazonAWSRegion))
+                .withCredentials(awsCredentialsProvider).build();
         dropTables(amazonDynamoDB);
         createTables(amazonDynamoDB);
         return amazonDynamoDB;
@@ -56,7 +56,8 @@ public class DynamoDBConfig {
             amazonDynamoDB.deleteTable("lend");
             amazonDynamoDB.deleteTable("member");
             amazonDynamoDB.deleteTable("appUser");
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     public void createTables(AmazonDynamoDB amazonDynamoDB) {
@@ -74,7 +75,7 @@ public class DynamoDBConfig {
     public void createTable(AmazonDynamoDB clientDB, String tableName) throws InterruptedException {
         DynamoDB dynamoDB = new DynamoDB(clientDB);
 
-        List<AttributeDefinition> attributeDefinitions= new ArrayList<>();
+        List<AttributeDefinition> attributeDefinitions = new ArrayList<>();
         attributeDefinitions.add(new AttributeDefinition().withAttributeName("id").withAttributeType("S"));
 
         List<KeySchemaElement> keySchema = new ArrayList<>();

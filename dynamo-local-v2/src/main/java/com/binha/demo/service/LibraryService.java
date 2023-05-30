@@ -38,9 +38,11 @@ public class LibraryService {
         }
         throw new EntityNotFoundException("Cant find any book under given ID");
     }
+
     public Iterable<Book> readBooks() {
         return bookRepository.findAll();
     }
+
     public Book readBook(String isbn) {
         Optional<Book> book = bookRepository.findByIsbn(isbn);
         if (book.isPresent()) {
@@ -48,9 +50,10 @@ public class LibraryService {
         }
         throw new EntityNotFoundException("Cant find any book under given ISBN");
     }
+
     public Book createBook(BookCreationDto book) {
         Optional<Author> author = authorRepository.findById(book.getAuthorId());
-        if (!author.isPresent()) {
+        if (author.isEmpty()) {
             throw new EntityNotFoundException("Author Not Found");
         }
         Book bookToCreate = new Book();
@@ -58,18 +61,21 @@ public class LibraryService {
         bookToCreate.setAuthorId(author.get().getId());
         return bookRepository.save(bookToCreate);
     }
+
     public void deleteBook(String id) {
         bookRepository.deleteById(id);
     }
+
     public Member createMember(MemberCreationDto request) {
         Member member = new Member();
         BeanUtils.copyProperties(request, member);
         member.setStatus(MemberStatus.ACTIVE);
         return memberRepository.save(member);
     }
-    public Member updateMember (String id, MemberCreationDto request) {
+
+    public Member updateMember(String id, MemberCreationDto request) {
         Optional<Member> optionalMember = memberRepository.findById(id);
-        if (!optionalMember.isPresent()) {
+        if (optionalMember.isEmpty()) {
             throw new EntityNotFoundException("Member not present in the database");
         }
         Member member = optionalMember.get();
@@ -77,14 +83,16 @@ public class LibraryService {
         member.setFirstName(request.getFirstName());
         return memberRepository.save(member);
     }
-    public Author createAuthor (AuthorCreationDto request) {
+
+    public Author createAuthor(AuthorCreationDto request) {
         Author author = new Author();
         BeanUtils.copyProperties(request, author);
         return authorRepository.save(author);
     }
-    public List<String> lendABook (BookLendDto request) {
+
+    public List<String> lendABook(BookLendDto request) {
         Optional<Member> memberForId = memberRepository.findById(request.getMemberId());
-        if (!memberForId.isPresent()) {
+        if (memberForId.isEmpty()) {
             throw new EntityNotFoundException("Member not present in the database");
         }
         Member member = memberForId.get();
@@ -94,11 +102,11 @@ public class LibraryService {
         List<String> booksApprovedToBurrow = new ArrayList<>();
         request.getBookIds().forEach(bookId -> {
             Optional<Book> bookForId = bookRepository.findById(bookId);
-            if (!bookForId.isPresent()) {
+            if (bookForId.isEmpty()) {
                 throw new EntityNotFoundException("Cant find any book under given ID");
             }
             Optional<Lend> burrowedBook = lendRepository.findByBookIdAndStatus(bookForId.get().getId(), LendStatus.BURROWED);
-            if (!burrowedBook.isPresent()) {
+            if (burrowedBook.isEmpty()) {
                 booksApprovedToBurrow.add(bookForId.get().getName());
                 Lend lend = new Lend();
                 lend.setMemberId(memberForId.get().getId());
@@ -114,11 +122,11 @@ public class LibraryService {
 
     public Book updateBook(String bookId, BookCreationDto request) {
         Optional<Author> author = authorRepository.findById(request.getAuthorId());
-        if (!author.isPresent()) {
+        if (author.isEmpty()) {
             throw new EntityNotFoundException("Author Not Found");
         }
         Optional<Book> optionalBook = bookRepository.findById(bookId);
-        if (!optionalBook.isPresent()) {
+        if (optionalBook.isEmpty()) {
             throw new EntityNotFoundException("Book Not Found");
         }
         Book book = optionalBook.get();

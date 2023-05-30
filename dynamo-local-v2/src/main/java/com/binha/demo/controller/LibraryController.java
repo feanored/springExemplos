@@ -18,54 +18,57 @@ import java.util.List;
 @RequestMapping(value = "/library")
 @RequiredArgsConstructor
 public class LibraryController {
+
     private final LibraryService libraryService;
 
     @GetMapping("/book")
-    public ResponseEntity readBooks(@RequestParam(required = false) String isbn) {
-        if (isbn == null) {
-            return ResponseEntity.ok(libraryService.readBooks());
-        }
+    public ResponseEntity<Iterable<Book>> readBooks() {
+        return ResponseEntity.ok(libraryService.readBooks());
+    }
+
+    @GetMapping("/book")
+    public ResponseEntity<Book> readBooByIsbnk(@RequestParam String isbn) {
         return ResponseEntity.ok(libraryService.readBook(isbn));
     }
 
     @GetMapping("/book/{bookId}")
-    public ResponseEntity<Book> readBook (@PathVariable String bookId) {
+    public ResponseEntity<Book> readBookById(@PathVariable String bookId) {
         return ResponseEntity.ok(libraryService.readBookById(bookId));
     }
 
     @PostMapping("/book")
-    public ResponseEntity<Book> createBook (@RequestBody BookCreationDto request) {
+    public ResponseEntity<Book> createBook(@RequestBody BookCreationDto request) {
         return ResponseEntity.ok(libraryService.createBook(request));
     }
 
-    @PatchMapping("/book/{bookId}")
-    public ResponseEntity<Book> updateBook (@PathVariable("bookId") String bookId, @RequestBody BookCreationDto request) {
+    @PutMapping("/book/{bookId}")
+    public ResponseEntity<Book> updateBook(@PathVariable("bookId") String bookId, @RequestBody BookCreationDto request) {
         return ResponseEntity.ok(libraryService.updateBook(bookId, request));
     }
 
     @PostMapping("/author")
-    public ResponseEntity<Author> createAuthor (@RequestBody AuthorCreationDto request) {
+    public ResponseEntity<Author> createAuthor(@RequestBody AuthorCreationDto request) {
         return ResponseEntity.ok(libraryService.createAuthor(request));
     }
 
     @DeleteMapping("/book/{bookId}")
-    public ResponseEntity<Void> deleteBook (@PathVariable String bookId) {
+    public ResponseEntity<Void> deleteBook(@PathVariable String bookId) {
         libraryService.deleteBook(bookId);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/member")
-    public ResponseEntity<Member> createMember (@RequestBody MemberCreationDto request) {
+    public ResponseEntity<Member> createMember(@RequestBody MemberCreationDto request) {
         return ResponseEntity.ok(libraryService.createMember(request));
     }
 
     @GetMapping("/member")
-    public ResponseEntity<List<Member>> readMembers () {
+    public ResponseEntity<List<Member>> readMembers() {
         return ResponseEntity.ok(libraryService.readMembers());
     }
 
-    @PatchMapping("/member/{memberId}")
-    public ResponseEntity<Member> updateMember (@RequestBody MemberCreationDto request, @PathVariable String memberId) {
+    @PutMapping("/member/{memberId}")
+    public ResponseEntity<Member> updateMember(@RequestBody MemberCreationDto request, @PathVariable String memberId) {
         return ResponseEntity.ok(libraryService.updateMember(memberId, request));
     }
 
