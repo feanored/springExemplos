@@ -1,6 +1,7 @@
-package com.binha.demo;
+package com.binha.demo.controller;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.binha.demo.config.TableUtils;
 import com.binha.demo.model.*;
 import com.binha.demo.repository.AuthorRepository;
 import com.binha.demo.repository.BookRepository;
@@ -15,8 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
 
-import static com.binha.demo.config.DynamoDBConfig.createTable;
-
 @RestController
 @RequestMapping(value = "/config")
 @RequiredArgsConstructor
@@ -26,6 +25,8 @@ public class MainController {
     private final AuthorRepository authorRepository;
     private final MemberRepository memberRepository;
     private final LendRepository lendRepository;
+
+    private final TableUtils tableUtils = new TableUtils();
 
     @Autowired
     private AmazonDynamoDB amazonDynamoDB;
@@ -63,31 +64,25 @@ public class MainController {
     }
 
     private void apagarTabelas() {
-        amazonDynamoDB.deleteTable("book");
-        amazonDynamoDB.deleteTable("author");
-        amazonDynamoDB.deleteTable("lend");
-        amazonDynamoDB.deleteTable("member");
-        amazonDynamoDB.deleteTable("appUser");
+        for (String tableName : tableUtils.getTables())
+            tableUtils.deleteTable(amazonDynamoDB, tableName);
     }
 
     private void criarTabelas() throws InterruptedException {
-        createTable(amazonDynamoDB, "book");
-        createTable(amazonDynamoDB, "author");
-        createTable(amazonDynamoDB, "lend");
-        createTable(amazonDynamoDB, "member");
-        createTable(amazonDynamoDB, "appUser");
+        for (String tableName : tableUtils.getTables())
+            tableUtils.createTable(amazonDynamoDB, tableName);
     }
 
     private void inserirDados() {
         Author author = new Author();
-        author.setFirstName("Random");
-        author.setLastName("Upu");
-        Author save = authorRepository.save(author);
+        author.setFirstName("J.K.");
+        author.setLastName("Rolling");
+        Author author1 = authorRepository.save(author);
         authorRepository.save(new Author("J.R.R.", "Tolkien"));
 
         Book book = new Book();
-        book.setAuthorId(save.getId());
-        book.setName("Arthur");
+        book.setAuthorId(author1.getId());
+        book.setName("Harry Potter e a Pedra Filosofal");
         book.setIsbn("2892828282822");
         Book bookSaved = bookRepository.save(book);
 
